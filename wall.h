@@ -1,3 +1,5 @@
+#ifndef WALL_H
+#define WALL_H
 
 // Basic wall object
 struct Wall
@@ -17,13 +19,11 @@ float timeToNextWall = wallSpawnDelay;
 
 void updateWalls() {
   for(int i = 0; i < numStoredWalls; i++) {
-    Wall* wall = &walls[i];
-
-    if(wall->isFlashing) {
+    if(walls[i].isFlashing) {
       
     }
     else {
-      wall->x -= currentWallSpeed;
+      walls[i].x -= currentWallSpeed;
     }
   }
 }
@@ -58,3 +58,4 @@ void spawnWall() {
   }
 }
 
+#endif
