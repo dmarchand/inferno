@@ -1,6 +1,7 @@
 #include <Arduboy.h>
 #include "inferno_bitmaps.h"
 #include "config.h"
+#include "wall.h"
 
 
 
@@ -11,10 +12,15 @@ Arduboy arduboy;
 int pX = pStartX;
 int pY = pStartY;
 
+// Wall variables
+Wall walls[storedWalls] = { NULL };
+int currentWallIndex = 0;
+float timeToNextWall = wallSpawnDelay;
+
 void setup() {
     arduboy.begin();
     arduboy.setFrameRate(framerate);
-
+    Serial.begin(9600);
     intro();
 }
 
@@ -62,8 +68,61 @@ void drawPlayer() {
   arduboy.drawSlowXYBitmap(pX, pY, player, 5, 5, 1);
 }
 
-void drawBox(int x, int y) {
+void drawBlock(int x, int y) {
+  Serial.print("Drawing block: ");
+  Serial.print(x);
+  Serial.print(", ");
+  Serial.print(y);
+  Serial.println("");
   arduboy.drawSlowXYBitmap(x, y, box, 8, 8, 1);
+}
+
+void spawnWall() {
+  int gapStart = 3;
+  int gapEnd = gapStart + wallGapSize;
+
+  bool blocks[wallSize];
+  for(int i = 0; i < wallSize; i++) {
+    if(i < gapStart || i > gapEnd) {
+      blocks[i] = false;
+    }
+    else {
+      blocks[i] = true;
+    }
+  }
+  
+  Wall newWall = 
+  {
+    wallSpawnX,
+    false,
+    wallBaseActivateDelay,
+    &blocks
+  };
+
+  walls[currentWallIndex] = newWall;
+  currentWallIndex++;
+}
+
+void drawWalls() {
+  for(int i = 0; i < storedWalls; i++) {
+    //if(walls[i] != NULL) {
+      drawWall(walls[i]);
+    //}
+  }
+}
+
+void drawWall(Wall wall) {
+  for(int i = 0; i < wallSize; i++) {
+          Serial.print("Drawing piece index: ");
+      Serial.print(i);
+      Serial.println("");
+    if(wall.blocks[i]) {
+
+      int x = wall.x;
+      int y = i * blockSize;
+      drawBlock(x, y);
+    }
+  }
 }
 
 void loop() {
@@ -75,8 +134,11 @@ void loop() {
 
     handleInput();
     drawPlayer();
+    drawWalls();
 
-    drawBox(64, 32);
+    if(DEBUG && currentWallIndex == 0) {
+      spawnWall();
+    }
 
     arduboy.display();
     
