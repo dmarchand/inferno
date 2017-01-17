@@ -1,6 +1,9 @@
 #include <Arduboy.h>
 #include "inferno_bitmaps.h"
 
+// Debug mode makes some things quicker
+bool DEBUG = false;
+
 // Arduboy ref
 Arduboy arduboy;
 
@@ -13,11 +16,15 @@ void setup() {
     arduboy.begin();
     arduboy.setFrameRate(30);
 
-    //intro();
+    intro();
 }
 
 void intro()
 {
+  if(DEBUG) {
+    return;
+  }
+  
   for(int i = -8; i < 28; i = i + 2)
   {
     arduboy.clear();
