@@ -9,14 +9,14 @@ struct Wall
 };
 
 // Wall variables
-Wall walls[storedWalls] = { NULL };
+Wall walls[numStoredWalls] = { NULL };
 int currentWallIndex = 0;
 int currentWallSpeed = wallBaseSpeed;
 float timeToNextWall = wallSpawnDelay;
 
 
 void updateWalls() {
-  for(int i = 0; i < storedWalls; i++) {
+  for(int i = 0; i < numStoredWalls; i++) {
     Wall* wall = &walls[i];
 
     if(wall->isFlashing) {
@@ -53,7 +53,7 @@ void spawnWall() {
   walls[currentWallIndex] = newWall;
   currentWallIndex++;
   
-  if(currentWallIndex > storedWalls) {
+  if(currentWallIndex > numStoredWalls) {
     currentWallIndex = 0;
   }
 }

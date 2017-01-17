@@ -22,7 +22,7 @@ const int wallSpawnX = 110;
 const int wallGapSize = 3;
 const int wallSize = 8;
 const int blockSize = 8;
-const int storedWalls = 8;
+const int numStoredWalls = 8;
 const int minX = -5;
 
 // Gameplay tuning

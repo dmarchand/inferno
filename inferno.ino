@@ -66,7 +66,7 @@ void drawPlayer() {
 
 // Iterate through all walls so we can draw
 void drawWalls() {
-  for(int i = 0; i < storedWalls; i++) {
+  for(int i = 0; i < numStoredWalls; i++) {
       drawWall(walls[i]);
   }
 }
