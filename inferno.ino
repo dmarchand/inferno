@@ -59,7 +59,11 @@ void handleInput() {
 
 // Render player sprite
 void drawPlayer() {
-  arduboy.drawSlowXYBitmap(pX, pY, ball, 5, 5, 1);
+  arduboy.drawSlowXYBitmap(pX, pY, player, 5, 5, 1);
+}
+
+void drawBox(int x, int y) {
+  arduboy.drawSlowXYBitmap(x, y, box, 8, 8, 1);
 }
 
 void loop() {
@@ -71,6 +75,8 @@ void loop() {
 
     handleInput();
     drawPlayer();
+
+    drawBox(64, 32);
 
     arduboy.display();
     
