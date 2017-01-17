@@ -12,10 +12,7 @@ Arduboy arduboy;
 int pX = pStartX;
 int pY = pStartY;
 
-// Wall variables
-Wall walls[storedWalls] = { NULL };
-int currentWallIndex = 0;
-float timeToNextWall = wallSpawnDelay;
+
 
 void setup() {
     arduboy.begin();
@@ -67,45 +64,14 @@ void drawPlayer() {
   arduboy.drawSlowXYBitmap(pX, pY, player, 5, 5, 1);
 }
 
-void drawBlock(int x, int y) {
-  arduboy.drawSlowXYBitmap(x, y, box, 8, 8, 1);
-}
-
-void spawnWall() {
-  int gapStart = 3;
-  int gapEnd = gapStart + wallGapSize;
-
-  
-  Wall newWall = 
-  {
-    wallSpawnX,
-    false,
-    wallBaseActivateDelay,
-    { false }
-  };
-
-  
-  for(int i = 0; i < wallSize; i++) {
-    if(i >= gapStart && i < gapEnd) {
-      newWall.blocks[i] = false;
-    }
-    else {
-      newWall.blocks[i] = true;
-    }
-  }
-
-  walls[currentWallIndex] = newWall;
-  currentWallIndex++;
-}
-
+// Iterate through all walls so we can draw
 void drawWalls() {
   for(int i = 0; i < storedWalls; i++) {
-    //if(walls[i] != NULL) {
       drawWall(walls[i]);
-    //}
   }
 }
 
+// Draw a specific wall
 void drawWall(Wall wall) {
   for(int i = 0; i < wallSize; i++) {
     if(wall.blocks[i]) {
@@ -116,6 +82,11 @@ void drawWall(Wall wall) {
   }
 }
 
+// Draw a wall block
+void drawBlock(int x, int y) {
+  arduboy.drawSlowXYBitmap(x, y, box, 8, 8, 1);
+}
+
 void loop() {
     if (!(arduboy.nextFrame()))
     return;
@@ -124,6 +95,7 @@ void loop() {
     arduboy.clear();
 
     handleInput();
+    updateWalls();
     drawPlayer();
     drawWalls();
 

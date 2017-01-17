@@ -23,6 +23,7 @@ const int wallGapSize = 3;
 const int wallSize = 8;
 const int blockSize = 8;
 const int storedWalls = 8;
+const int minX = -5;
 
 // Gameplay tuning
 const int wallBaseActivateDelay = 8;
