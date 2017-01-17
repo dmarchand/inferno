@@ -51,7 +51,7 @@ void updateWalls() {
 
 // Initializes a new 'Wall' struct with a random gap
 void spawnWall() {
-  int gapStart = 3; // Randomly decide where the gap starts
+  int gapStart = random(0, wallSize - wallGapSize + 1); // Randomly decide where the gap starts
   int gapEnd = gapStart + wallGapSize;
 
   // Get a wall from the pool
