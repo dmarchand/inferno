@@ -1,20 +1,19 @@
 #include <Arduboy.h>
 #include "inferno_bitmaps.h"
+#include "config.h"
 
-// Debug mode makes some things quicker
-bool DEBUG = false;
+
 
 // Arduboy ref
 Arduboy arduboy;
 
 // Player variables
-int pX = 3;
-int pY = 10;
-int pSpeed = 2;
+int pX = pStartX;
+int pY = pStartY;
 
 void setup() {
     arduboy.begin();
-    arduboy.setFrameRate(30);
+    arduboy.setFrameRate(framerate);
 
     intro();
 }
