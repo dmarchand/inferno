@@ -42,17 +42,17 @@ void intro()
 
 // Deal with player button presses
 void handleInput() {
-  if (arduboy.pressed(RIGHT_BUTTON)) {
+  if (arduboy.pressed(RIGHT_BUTTON) && pX <= pMaxX) {
     pX += pSpeed;
   }
-  else if (arduboy.pressed(LEFT_BUTTON)) {
+  else if (arduboy.pressed(LEFT_BUTTON) && pX >= pMinX) {
     pX -= pSpeed;
   }
 
-  if (arduboy.pressed(UP_BUTTON)) {
+  if (arduboy.pressed(UP_BUTTON) && pY >= pMinY) {
     pY -= pSpeed;
   }
-  else if (arduboy.pressed(DOWN_BUTTON)) {
+  else if (arduboy.pressed(DOWN_BUTTON) && pY <= pMaxY) {
     pY += pSpeed;
   }
 }
