@@ -16,6 +16,7 @@ int pY = pStartY;
 
 void setup() {
     arduboy.begin();
+    arduboy.initRandomSeed();
     arduboy.setFrameRate(framerate);
     intro();
 }
