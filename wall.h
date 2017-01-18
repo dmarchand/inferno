@@ -59,6 +59,7 @@ void spawnWall() {
 
   newWall.x = wallSpawnX;
   newWall.disabled = false;
+  newWall.moveSpeed = currentWallSpeed;
   
   // Fill in the blocks array, making sure to include the gap
   for(int i = 0; i < wallSize; i++) {
