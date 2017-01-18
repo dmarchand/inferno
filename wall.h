@@ -16,7 +16,7 @@ struct Wall
 Wall walls[numStoredWalls]; // Used to keep track of our walls in memory
 int currentWallIndex = 0; // Which wall index to write to when we create a new one
 int currentWallSpeed = wallBaseSpeed; // How fast walls move on the current difficulty level
-float timeToNextWall = wallSpawnDelay; // How long until we spawn the next wall
+int timeToNextWall = wallSpawnDelay; // How long until we spawn the next wall
 
 // Since we're allocating the Wall struct on the stack
 // we can't delete them, as they'll exist until we exit the local block,
@@ -35,18 +35,6 @@ void initializeWalls() {
 
       walls[i] = newWall;
    }
-}
-
-// Checks each wall in 'walls' and decides how to deal with it
-void updateWalls() {
-  for(int i = 0; i < numStoredWalls; i++) {
-    if(walls[i].isPreparing) {
-      
-    }
-    else if(!walls[i].disabled) {
-      walls[i].x -= walls[i].moveSpeed;
-    }
-  }
 }
 
 // Initializes a new 'Wall' struct with a random gap
@@ -79,6 +67,28 @@ void spawnWall() {
   if(currentWallIndex > numStoredWalls) {
     currentWallIndex = 0;
   }
+}
+
+// Checks each wall in 'walls' and decides how to deal with it
+void updateWalls() {
+  for(int i = 0; i < numStoredWalls; i++) {
+    if(walls[i].isPreparing) {
+      
+    }
+    else if(!walls[i].disabled) {
+      walls[i].x -= walls[i].moveSpeed;
+    }
+  }
+
+  // Count down and spawn a wall if needed
+  if(timeToNextWall <= 0) {
+    spawnWall();
+    timeToNextWall = wallSpawnDelay;
+  }
+  else {
+    timeToNextWall--;
+  }
+  
 }
 
 #endif

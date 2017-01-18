@@ -30,6 +30,6 @@ const int wallBaseActivateDelay = 8;
 const float wallActivateReduction = 0.1;
 const int wallBaseSpeed = 2;
 const float wallSpeedGain = 1;
-const float wallSpawnDelay = 5; 
+const int wallSpawnDelay = 50; 
 
 #endif
