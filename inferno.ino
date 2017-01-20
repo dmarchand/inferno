@@ -16,6 +16,9 @@ int pY = pStartY;
 // What game mode we're in
 int gameState = INTRO;
 
+// Score tracking
+int score = 0;
+
 
 void setup() {
   arduboy.begin();
@@ -98,24 +101,30 @@ void endGame() {
   gameState = GAMEOVER;
 }
 
+// This behemoth is responsible for determining if
+// the player collided with something it shouldn't.
 void checkPlayerCollision() {
+  // Before we do anything, calculate player collision bounds
   int playerX = pX - (pWidth / 2);
   int playerXEnd = pX + (pWidth / 2);
   int playerY = pY - (pHeight / 2);
   int playerYEnd = pY + (pHeight / 2);
 
+  // Iterate through each wall to start collision checking
   for (int i = 0; i < numStoredWalls; i++) {
-    if (!walls[i].disabled) {
-      for (int q = 0; q < wallSize; q++) {
-        if (walls[i].blocks[q]) {
+    if (!walls[i].disabled) { // If the wall is disabled let's save some CPU cycles
+      for (int q = 0; q < wallSize; q++) { // If the wall is enabled, iterate through its blocks
+        if (walls[i].blocks[q]) { // Blocks set to 'false' represent the wall gap, so skip them
+          // Much like before, we calculate the bounding box for...the box
           int blockX = walls[i].x;
           int blockXEnd = blockX + blockSize;
           int blockY = q * blockSize;
           int blockYEnd = blockY + blockSize;
 
+          // Finall, let's see if the player collides with the box!
           if (doRectanglesCollide(playerX, playerY, playerXEnd, playerYEnd,
                                   blockX, blockY, blockXEnd, blockYEnd)) {
-            endGame();
+            endGame(); // If the player collides, we can end the game and bail out of this nested loop early
             return;
           }
         }
@@ -124,6 +133,8 @@ void checkPlayerCollision() {
   }
 }
 
+// Called every loop if we're in gameplay mode
+// Handles everything you'd expect!
 void doGameplay() {
   handleInput();
   updateWalls();
@@ -132,11 +143,15 @@ void doGameplay() {
   checkPlayerCollision();
 }
 
+// Called if we're in game over mode
+// Displays game over screen, final score, etc
 void doGameOver() {
   resetGame();
+  score = 0;
   gameState = GAMEPLAY;
 }
 
+// Clear game state so we can start anew!
 void resetGame() {
   pX = pStartX;
   pY = pStartY;
@@ -144,12 +159,14 @@ void resetGame() {
 }
 
 void loop() {
+  // If the arduboy isn't ready to render the next frame, chill
   if (!(arduboy.nextFrame()))
     return;
 
-  // Is this too expensive?
+  // Wipe the screen
   arduboy.clear();
 
+  // Check game state and act accordingly
   switch (gameState) {
     case GAMEPLAY:
       doGameplay();
@@ -161,10 +178,7 @@ void loop() {
       break;
   }
 
-
-
-
-
+  // Finally, let's render the screen
   arduboy.display();
 
 }
