@@ -2,6 +2,7 @@
 #include "inferno_bitmaps.h"
 #include "config.h"
 #include "wall.h"
+#include "collision.h"
 
 
 
@@ -12,6 +13,7 @@ Arduboy arduboy;
 int pX = pStartX;
 int pY = pStartY;
 
+bool gameOver = false;
 
 
 void setup() {
@@ -88,9 +90,49 @@ void drawBlock(int x, int y) {
   arduboy.drawSlowXYBitmap(x, y, box, 8, 8, 1);
 }
 
+void endGame() {
+  gameOver = true;
+  
+}
+
+void checkPlayerCollision() {
+  int playerX = pX - (pWidth / 2);
+  int playerXEnd = pX + (pWidth / 2);
+  int playerY = pY - (pHeight / 2);
+  int playerYEnd = pY + (pHeight / 2);
+
+  for(int i = 0; i < numStoredWalls; i++) {
+    if(!walls[i].disabled) {
+      for(int q = 0; q < wallSize; q++) {
+        if(walls[i].blocks[q]) {
+          int blockX = walls[i].x;
+          int blockXEnd = blockX + blockSize;
+          int blockY = q * blockSize;
+          int blockYEnd = blockY + blockSize;
+
+          if(doRectanglesCollide(playerX, playerY, playerXEnd, playerYEnd, 
+             blockX, blockY, blockXEnd, blockYEnd)) {
+            endGame();
+            return;
+          }
+        }
+      }
+    }
+  }
+}
+
 void loop() {
     if (!(arduboy.nextFrame()))
-    return;
+      return;
+
+    if(gameOver) {
+      arduboy.clear();
+      pX = pStartX;
+      pY = pStartY;
+      initializeWalls();
+
+      gameOver = false;
+    }
 
     // Is this too expensive?
     arduboy.clear();
@@ -99,6 +141,7 @@ void loop() {
     updateWalls();
     drawPlayer();
     drawWalls();
+    checkPlayerCollision();
 
     if(DEBUG && currentWallIndex == 0) {
       spawnWall();

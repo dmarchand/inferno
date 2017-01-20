@@ -15,6 +15,8 @@ const int pMinX = 2;
 const int pMaxX = 120;
 const int pMinY = 2;
 const int pMaxY = 55;
+const int pWidth = 4;
+const int pHeight = 4;
 
 // Wall config
 const float wallFlashInterval = 3;
