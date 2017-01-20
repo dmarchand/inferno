@@ -4,5 +4,5 @@
 
 extern const unsigned char player[];
 extern const unsigned char box[];
-
+extern const unsigned char powerup[];
 #endif
