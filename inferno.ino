@@ -13,23 +13,25 @@ Arduboy arduboy;
 int pX = pStartX;
 int pY = pStartY;
 
-bool gameOver = false;
+// What game mode we're in
+int gameState = INTRO;
 
 
 void setup() {
-    arduboy.begin();
-    arduboy.initRandomSeed();
-    arduboy.setFrameRate(framerate);
-    intro();
+  arduboy.begin();
+  arduboy.initRandomSeed();
+  arduboy.setFrameRate(framerate);
+  intro();
 }
 
 void intro()
 {
-  if(DEBUG) {
+  if (DEBUG) {
+    gameState = GAMEPLAY;
     return;
   }
-  
-  for(int i = -8; i < 28; i = i + 2)
+
+  for (int i = -8; i < 28; i = i + 2)
   {
     arduboy.clear();
     arduboy.setCursor(30, i);
@@ -41,6 +43,8 @@ void intro()
   delay(160);
   arduboy.tunes.tone(1318, 400);
   delay(2000);
+
+  gameState = GAMEPLAY;
 
   arduboy.clear();
 }
@@ -69,15 +73,15 @@ void drawPlayer() {
 
 // Iterate through all walls so we can draw
 void drawWalls() {
-  for(int i = 0; i < numStoredWalls; i++) {
-      drawWall(walls[i]);
+  for (int i = 0; i < numStoredWalls; i++) {
+    drawWall(walls[i]);
   }
 }
 
 // Draw a specific wall
 void drawWall(Wall wall) {
-  for(int i = 0; i < wallSize; i++) {
-    if(wall.blocks[i]) {
+  for (int i = 0; i < wallSize; i++) {
+    if (wall.blocks[i]) {
       int x = wall.x;
       int y = i * blockSize;
       drawBlock(x, y);
@@ -91,8 +95,7 @@ void drawBlock(int x, int y) {
 }
 
 void endGame() {
-  gameOver = true;
-  
+  gameState = GAMEOVER;
 }
 
 void checkPlayerCollision() {
@@ -101,17 +104,17 @@ void checkPlayerCollision() {
   int playerY = pY - (pHeight / 2);
   int playerYEnd = pY + (pHeight / 2);
 
-  for(int i = 0; i < numStoredWalls; i++) {
-    if(!walls[i].disabled) {
-      for(int q = 0; q < wallSize; q++) {
-        if(walls[i].blocks[q]) {
+  for (int i = 0; i < numStoredWalls; i++) {
+    if (!walls[i].disabled) {
+      for (int q = 0; q < wallSize; q++) {
+        if (walls[i].blocks[q]) {
           int blockX = walls[i].x;
           int blockXEnd = blockX + blockSize;
           int blockY = q * blockSize;
           int blockYEnd = blockY + blockSize;
 
-          if(doRectanglesCollide(playerX, playerY, playerXEnd, playerYEnd, 
-             blockX, blockY, blockXEnd, blockYEnd)) {
+          if (doRectanglesCollide(playerX, playerY, playerXEnd, playerYEnd,
+                                  blockX, blockY, blockXEnd, blockYEnd)) {
             endGame();
             return;
           }
@@ -121,32 +124,47 @@ void checkPlayerCollision() {
   }
 }
 
+void doGameplay() {
+  handleInput();
+  updateWalls();
+  drawPlayer();
+  drawWalls();
+  checkPlayerCollision();
+}
+
+void doGameOver() {
+  resetGame();
+  gameState = GAMEPLAY;
+}
+
+void resetGame() {
+  pX = pStartX;
+  pY = pStartY;
+  initializeWalls();
+}
+
 void loop() {
-    if (!(arduboy.nextFrame()))
-      return;
+  if (!(arduboy.nextFrame()))
+    return;
 
-    if(gameOver) {
-      arduboy.clear();
-      pX = pStartX;
-      pY = pStartY;
-      initializeWalls();
+  // Is this too expensive?
+  arduboy.clear();
 
-      gameOver = false;
-    }
+  switch (gameState) {
+    case GAMEPLAY:
+      doGameplay();
+      break;
+    case GAMEOVER:
+      doGameOver();
+      break;
+    default:
+      break;
+  }
 
-    // Is this too expensive?
-    arduboy.clear();
 
-    handleInput();
-    updateWalls();
-    drawPlayer();
-    drawWalls();
-    checkPlayerCollision();
 
-    if(DEBUG && currentWallIndex == 0) {
-      spawnWall();
-    }
 
-    arduboy.display();
-    
+
+  arduboy.display();
+
 }

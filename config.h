@@ -1,6 +1,11 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define INTRO 0
+#define STARTSCREEN 1
+#define GAMEPLAY 2
+#define GAMEOVER 3
+
 // Debug mode makes some things quicker
 const bool DEBUG = true;
 
