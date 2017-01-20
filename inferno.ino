@@ -81,7 +81,7 @@ void handleInput() {
 
 // Render player sprite
 void drawPlayer() {
-  arduboy.drawSlowXYBitmap(pX, pY, player, 5, 5, 1);
+  arduboy.drawSlowXYBitmap(pX, pY, player, 8, 8, 1);
 }
 
 // Iterate through all walls so we can draw
