@@ -24,12 +24,19 @@ void setup() {
   arduboy.begin();
   arduboy.initRandomSeed();
   arduboy.setFrameRate(framerate);
+
+  if(DEBUG) {
+    Serial.begin(9600);
+  }
+  
+  resetGame();
   intro();
 }
 
 void intro()
 {
   if (DEBUG) {
+    score = 0;
     gameState = GAMEPLAY;
     return;
   }
@@ -114,23 +121,35 @@ void checkPlayerCollision() {
   for (int i = 0; i < numStoredWalls; i++) {
     if (!walls[i].disabled) { // If the wall is disabled let's save some CPU cycles
       for (int q = 0; q < wallSize; q++) { // If the wall is enabled, iterate through its blocks
-        if (walls[i].blocks[q]) { // Blocks set to 'false' represent the wall gap, so skip them
-          // Much like before, we calculate the bounding box for...the box
-          int blockX = walls[i].x;
-          int blockXEnd = blockX + blockSize;
-          int blockY = q * blockSize;
-          int blockYEnd = blockY + blockSize;
+        // Much like before, we calculate the bounding box for...the box
+        int blockX = walls[i].x;
+        int blockXEnd = blockX + blockSize;
+        int blockY = q * blockSize;
+        int blockYEnd = blockY + blockSize;
 
-          // Finall, let's see if the player collides with the box!
-          if (doRectanglesCollide(playerX, playerY, playerXEnd, playerYEnd,
-                                  blockX, blockY, blockXEnd, blockYEnd)) {
+        // Finall, let's see if the player collides with the box!
+        if (doRectanglesCollide(playerX, playerY, playerXEnd, playerYEnd,
+                                blockX, blockY, blockXEnd, blockYEnd)) {
+          if (walls[i].blocks[q]) {
             endGame(); // If the player collides, we can end the game and bail out of this nested loop early
             return;
+          }
+          else if (!walls[i].scoreCounted) {
+            // We collided with an empty block, which means we get a point!
+            score++;
+            Serial.println("Score++");
+            walls[i].scoreCounted = true;
           }
         }
       }
     }
   }
+}
+
+// Display the player score
+void drawScore() {
+  arduboy.setCursor(scoreDisplayX, scoreDisplayY); // Shift the cursor over
+  arduboy.print(score);
 }
 
 // Called every loop if we're in gameplay mode
@@ -140,6 +159,7 @@ void doGameplay() {
   updateWalls();
   drawPlayer();
   drawWalls();
+  drawScore();
   checkPlayerCollision();
 }
 

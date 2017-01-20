@@ -10,6 +10,7 @@ struct Wall
   bool blocks[wallSize]; // Each 8x8 square of the wall, and whether or not it exists or is empty
   int moveSpeed; // How fast this wall moves towards the left
   bool disabled; // If this wall shouldn't be interacted with
+  bool scoreCounted; // If the wall has already incremented player score
 };
 
 // Wall variables
@@ -25,11 +26,12 @@ void initializeWalls() {
   for(int i = 0; i < numStoredWalls; i++) {
       Wall newWall = 
       {
-        wallSpawnX,
+        -999,
         false,
         wallBaseActivateDelay,
         { false },
         currentWallSpeed,
+        true,
         true
       };
 
@@ -45,9 +47,12 @@ void spawnWall() {
   // Get a wall from the pool
   Wall newWall = walls[currentWallIndex];
 
+  // Set up the parameters for the wall we just pulled out of the pool
   newWall.x = wallSpawnX;
   newWall.disabled = false;
   newWall.moveSpeed = currentWallSpeed;
+  newWall.scoreCounted = false;
+  Serial.println("Wall created");
   
   // Fill in the blocks array, making sure to include the gap
   for(int i = 0; i < wallSize; i++) {
@@ -58,13 +63,16 @@ void spawnWall() {
       newWall.blocks[i] = true;
     }
   }
-  
+
+  Serial.println("Blocks initialized");
+
+  // Return our wall to the pool
   walls[currentWallIndex] = newWall;
-  
+
   currentWallIndex++;
 
   // Loop back around in the wall tracking array
-  if(currentWallIndex > numStoredWalls) {
+  if(currentWallIndex >= numStoredWalls) {
     currentWallIndex = 0;
   }
 }

@@ -12,6 +12,10 @@ const bool DEBUG = true;
 // Core game config
 const int framerate = 30;
 
+// GUI config
+const int scoreDisplayX = 110;
+const int scoreDisplayY = 2;
+
 // Player config
 const int pSpeed = 2;
 const int pStartX = 5;
