@@ -19,16 +19,19 @@ int gameState = INTRO;
 // Score tracking
 int score = 0;
 
+// Current difficulty level
+int difficulty = 0;
+
 
 void setup() {
   arduboy.begin();
   arduboy.initRandomSeed();
   arduboy.setFrameRate(framerate);
 
-  if(DEBUG) {
+  if (DEBUG) {
     Serial.begin(9600);
   }
-  
+
   resetGame();
   intro();
 }
@@ -152,14 +155,26 @@ void drawScore() {
   arduboy.print(score);
 }
 
+// Display the difficulty level
+void drawDifficulty() {
+  int displayDifficulty = difficulty + 1;
+
+  arduboy.setCursor(difficultyDisplayX, difficultyDisplayY); // Shift the cursor
+  arduboy.print("Lv:");
+  arduboy.setCursor(difficultyDisplayX + 12, difficultyDisplayY);
+  arduboy.print(displayDifficulty);
+}
+
 // Called every loop if we're in gameplay mode
 // Handles everything you'd expect!
 void doGameplay() {
   handleInput();
-  updateWalls();
+  updateWalls(difficulty);
   drawPlayer();
   drawWalls();
   drawScore();
+  drawDifficulty();
+  checkDifficulty();
   checkPlayerCollision();
 }
 
@@ -175,7 +190,21 @@ void doGameOver() {
 void resetGame() {
   pX = pStartX;
   pY = pStartY;
+  difficulty = 0;
   initializeWalls();
+}
+
+void checkDifficulty() {
+  if (difficulty >= sizeof(difficultyThresholds) / sizeof(difficultyThresholds[0])) {
+    return;
+  }
+
+  int threshold = difficultyThresholds[difficulty];
+  if (score >= threshold) {
+    difficulty++;
+    currentWallSpeed += wallSpeedGain;
+    wallSpawnDelay -= wallSpawnDelayReduction;
+  }
 }
 
 void loop() {

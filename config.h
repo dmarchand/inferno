@@ -15,17 +15,19 @@ const int framerate = 30;
 // GUI config
 const int scoreDisplayX = 110;
 const int scoreDisplayY = 2;
+const int difficultyDisplayX = 5;
+const int difficultyDisplayY = 2;
 
 // Player config
-const int pSpeed = 2;
+const int pSpeed = 3;
 const int pStartX = 5;
 const int pStartY = 32;
 const int pMinX = 2;
 const int pMaxX = 120;
 const int pMinY = 2;
 const int pMaxY = 55;
-const int pWidth = 4;
-const int pHeight = 4;
+const int pWidth = 3;
+const int pHeight = 3;
 
 // Wall config
 const float wallFlashInterval = 3;
@@ -41,6 +43,9 @@ const int wallBaseActivateDelay = 8;
 const float wallActivateReduction = 0.1;
 const int wallBaseSpeed = 2;
 const float wallSpeedGain = 1;
-const int wallSpawnDelay = 50; 
+const int baseWallSpawnDelay = 50; 
+const int wallSpawnDelayReduction = 8;
+const int difficultyThresholds[] = { 10, 20, 35, 50 };
+const int difficultyTighterGapsThreshold = 3;
 
 #endif
